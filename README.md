@@ -1,5 +1,9 @@
 # Portable OS on SD Card
 
+**[⬇️ نزّل سكربت الإعداد الجاهز](https://raw.githubusercontent.com/tareknahas85-star/portable-os-sdcard/main/02-post-install-setup.sh)** &nbsp;|&nbsp; **[⬇️ Download the ready-to-run setup script](https://raw.githubusercontent.com/tareknahas85-star/portable-os-sdcard/main/02-post-install-setup.sh)**
+
+---
+
 ## بالعربي
 
 دليل بناء + سكربتات لتحويل فلاشة SD Card بمساحة 128GB لـ "كمبيوتر بجيبك": تنصيب Ubuntu حقيقي (مش live/persistence) يقلع على أي جهاز x86_64 (BIOS أو UEFI)، واجهة Openbox خفيفة، وقسم داتا مشفّر بـ LUKS.
