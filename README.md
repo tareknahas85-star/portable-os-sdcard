@@ -1,43 +1,47 @@
-# Portable OS on SD Card
+# Portable OS on an SD Card
 
-**[⬇️ نزّل سكربت الإعداد الجاهز](https://raw.githubusercontent.com/tareknahas85-star/portable-os-sdcard/main/02-post-install-setup.sh)** &nbsp;|&nbsp; **[⬇️ Download the ready-to-run setup script](https://raw.githubusercontent.com/tareknahas85-star/portable-os-sdcard/main/02-post-install-setup.sh)**
-
----
-
-## بالعربي
-
-دليل بناء + سكربتات لتحويل فلاشة SD Card بمساحة 128GB لـ "كمبيوتر بجيبك": تنصيب Ubuntu حقيقي (مش live/persistence) يقلع على أي جهاز x86_64 (BIOS أو UEFI)، واجهة Openbox خفيفة، وقسم داتا مشفّر بـ LUKS.
-
-### المحتوى
-- [`01-Build-Guide.md`](./01-Build-Guide.md) — دليل البناء الكامل (تقسيم، إقلاع هجين BIOS+UEFI، إعداد LUKS، نصائح لعمر الكارت)
-- [`02-post-install-setup.sh`](./02-post-install-setup.sh) — سكربت ما بعد التنصيب: بينصّب Openbox + tint2 + rofi + lightdm + NetworkManager + zram
-- [`autoinstall-user-data.yaml`](./autoinstall-user-data.yaml) — قالب autoinstall جاهز. **فيه placeholders بس** (`CHANGE_ME_HASH_NOT_PLAINTEXT`، `CHANGE_ME_TEMPORARY_PASSPHRASE`) — عدّلهم قبل الاستخدام
-
-### أهم نقاط
-- تقسيم GPT من 4 أقسام: bios_grub (1MB) + ESP (512MB) + root غير مشفّر (20GB) + قسم داتا مشفّر (الباقي)
-- خطوة إقلاع هجين يدوية (`grub-install --target=i386-pc`) عشان تشتغل على BIOS قديم وUEFI حديث
-- zram بدل سواب القرص، noatime، وfstrim.timer لحماية عمر الكارت
-- قسم الداتا منفصل عن الـ OS — إعادة التنصيب ما بتلمس الداتا المشفّرة
-
-⚠️ **قبل ما تستخدم الـ autoinstall على جهاز حقيقي:** جرّبه على VM أو قرص فاضي أولاً — غلطة بتحديد القرص ممكن تمسح قرص غلط.
+**[⬇️ Download the setup script](https://raw.githubusercontent.com/tareknahas85-star/portable-os-sdcard/main/02-post-install-setup.sh)** &nbsp;|&nbsp; **[⬇️ نزّل سكربت الإعداد](https://raw.githubusercontent.com/tareknahas85-star/portable-os-sdcard/main/02-post-install-setup.sh)**
 
 ---
 
 ## In English
 
-Build guide + scripts for turning a 128GB SD card into a full, bootable "laptop in your pocket": a real Ubuntu Server install (not live/persistence) that boots on any x86_64 machine (BIOS or UEFI), a lightweight Openbox desktop, and a LUKS-encrypted data partition.
+A guide and scripts to turn a 128GB SD card into a computer you carry in your pocket.
 
-### Contents
+It is a real Ubuntu system on the card, not a live or test copy. You put the card in almost any computer and it starts your own system, with your own files and programs. The desktop is light and fast, and your files are kept in a locked part of the card that nobody can open without your password.
 
-- [`01-Build-Guide.md`](./01-Build-Guide.md) — full build guide (partitioning, hybrid BIOS+UEFI boot, LUKS setup, SD card longevity tips)
-- [`02-post-install-setup.sh`](./02-post-install-setup.sh) — one-shot post-install script: installs Openbox + tint2 + rofi + lightdm + NetworkManager + zram, configures the desktop session
-- [`autoinstall-user-data.yaml`](./autoinstall-user-data.yaml) — cloud-init/subiquity autoinstall template. **Placeholder values only** (`CHANGE_ME_HASH_NOT_PLAINTEXT`, `CHANGE_ME_TEMPORARY_PASSPHRASE`) — edit the disk `path`, the user password hash, and the LUKS passphrase before use, and rotate the LUKS key immediately after first boot
+### The files here
 
-### Highlights
+- [`01-Build-Guide.md`](./01-Build-Guide.md) is the full guide, step by step
+- [`02-post-install-setup.sh`](./02-post-install-setup.sh) is a script you run after the install. It sets up the desktop, the network and the rest
+- [`autoinstall-user-data.yaml`](./autoinstall-user-data.yaml) is a ready file that installs the system for you. **It has empty values inside** (`CHANGE_ME_HASH_NOT_PLAINTEXT` and `CHANGE_ME_TEMPORARY_PASSPHRASE`). Put your own values before you use it
 
-- 4-partition GPT layout: `bios_grub` (1MB) + EFI System Partition (512MB) + unencrypted root (20GB, ext4) + LUKS-encrypted data partition (rest of the disk)
-- Manual hybrid-boot step (`grub-install --target=i386-pc`) so the card boots on both legacy BIOS and modern UEFI machines
-- zram instead of disk swap, `noatime`, and `fstrim.timer` to protect SD card lifespan
-- Data partition is separate from the OS partition, so a reinstall/distro change never touches your encrypted data
+### Good to know
 
-⚠️ **Before using the autoinstall template on real hardware:** test it on a VM or spare disk first — a wrong disk match can wipe the wrong drive.
+- The card is cut into 4 parts, so the system starts on old computers and new ones too
+- Your files sit in their own locked part, away from the system part. If you install the system again later, your files stay safe
+- Some settings are added to make the card live longer, because SD cards get tired from too much writing
+
+⚠️ **Before you run this on a real computer:** try it first on a test machine or an empty disk. If you pick the wrong disk by mistake, you can erase everything on it.
+
+---
+
+## بالعربي
+
+دليل وسكربتات تحوّل كرت SD بحجم 128 جيجا إلى كمبيوتر تحمله في جيبك.
+
+هو نظام أوبونتو حقيقي على الكرت، وليس نسخة تجريبية مؤقتة. تضع الكرت في أي كمبيوتر تقريباً فيقلع بنظامك أنت، بملفاتك وبرامجك. سطح المكتب خفيف وسريع، وملفاتك محفوظة في جزء مقفل من الكرت لا يستطيع أحد فتحه بدون كلمة السر.
+
+### الملفات الموجودة هنا
+
+- [`01-Build-Guide.md`](./01-Build-Guide.md) هو الدليل الكامل، خطوة بخطوة
+- [`02-post-install-setup.sh`](./02-post-install-setup.sh) سكربت تشغّله بعد التنصيب. يجهّز لك سطح المكتب والشبكة وباقي الأمور
+- [`autoinstall-user-data.yaml`](./autoinstall-user-data.yaml) ملف جاهز ينصّب لك النظام. **بداخله قيم فارغة** (`CHANGE_ME_HASH_NOT_PLAINTEXT` و `CHANGE_ME_TEMPORARY_PASSPHRASE`). ضع قيمك الخاصة قبل أن تستخدمه
+
+### أشياء من الجيد معرفتها
+
+- الكرت مقسوم إلى 4 أجزاء، لكي يقلع النظام على الأجهزة القديمة والحديثة معاً
+- ملفاتك في جزء مقفل خاص بها، بعيداً عن جزء النظام. وإذا نصّبت النظام من جديد لاحقاً، تبقى ملفاتك سليمة
+- أُضيفت بعض الإعدادات ليعيش الكرت مدة أطول، لأن كروت SD تتعب من كثرة الكتابة عليها
+
+⚠️ **قبل أن تشغّل هذا على كمبيوتر حقيقي:** جرّبه أولاً على جهاز تجريبي أو قرص فارغ. فإذا اخترت القرص الخطأ بالغلط، قد تمسح كل ما عليه.
