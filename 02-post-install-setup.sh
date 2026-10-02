@@ -1,14 +1,14 @@
 #!/usr/bin/env bash
 # =============================================================================
 # 02-post-install-setup.sh
-# يشغّل مرة وحدة بعد أول إقلاع ناجح لنظام Ubuntu Server المثبت على الـ SD Card.
+# بيتشغّل مرة وحدة بعد أول إقلاع ناجح لنظام Ubuntu Server المثبت على الـ SD Card.
 # بيركب واجهة رسومية خفيفة (Openbox) + أدوات أساسية + zram + إعدادات لحماية
 # عمر الـ SD Card. شغّله بصلاحيات root:
 #
 #   chmod +x 02-post-install-setup.sh
 #   sudo ./02-post-install-setup.sh
 #
-# لازم اتصال إنترنت فعّال وقت التشغيل (الأسهل: كيبل إيثرنت أول مرة).
+# لازم يكون في إنترنت شغّال وقت التشغيل (الأسهل: كيبل إيثرنت أول مرة).
 # =============================================================================
 
 set -euo pipefail
@@ -57,7 +57,7 @@ systemctl enable lightdm
 echo "==> إعداد جلسة Openbox"
 mkdir -p "$USER_HOME/.config/openbox"
 cat > "$USER_HOME/.config/openbox/autostart" <<'EOF'
-# يشتغل تلقائياً وقت بدء جلسة Openbox
+# بيشتغل تلقائي وقت بدء جلسة Openbox
 tint2 &
 nm-applet &
 lxpolkit &
@@ -67,7 +67,7 @@ EOF
 
 mkdir -p "$USER_HOME/.config/tint2"
 cat > "$USER_HOME/.config/tint2/tint2rc" <<'EOF'
-# إعداد بسيط لـ tint2: taskbar + ساعة، بدون تعقيد
+# إعداد بسيط لـ tint2: taskbar + ساعة، من غير تعقيد
 panel_items = TSC
 taskbar_mode = single_desktop
 clock_format = %H:%M

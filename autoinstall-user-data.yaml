@@ -2,15 +2,15 @@
 # =============================================================================
 # نموذج Autoinstall لـ Ubuntu Server 26.04 LTS — بناء "كمبيوتر محمول" على SD Card
 # =============================================================================
-# تحذير هام قبل الاستخدام:
+# تنبيه مهم قبل ما تستخدمه:
 #   1. هاد ملف نموذجي (template) — لازم تعدله وتجربه على VM/قرص فاضي قبل استخدامه
 #      على الـ SD Card الحقيقية. أي خطأ بتحديد القرص (disk match) ممكن يمسح
 #      قرص غلط بالجهاز يلي عم تشغّل عليه التنصيب.
 #   2. راجع التوثيق الرسمي الحالي وقت التنفيذ لأن صياغة autoinstall بتتغيّر
 #      بين إصدارات أوبنتو:
 #      https://canonical-subiquity.readthedocs-hosted.com/en/latest/reference/autoinstall-reference.html
-#   3. كلمة سر الـ LUKS محطوطة هون كنص صريح (plaintext) وقت البناء فقط.
-#      غيّرها فوراً بعد أول إقلاع عبر: sudo cryptsetup luksChangeKey /dev/sdX4
+#   3. كلمة سر الـ LUKS محطوطة هون كنص صريح (plaintext) وقت البناء بس.
+#      غيّرها على طول بعد أول إقلاع عبر: sudo cryptsetup luksChangeKey /dev/sdX4
 #      واحذف هاد الملف من أي مكان مش آمن بعد الاستخدام.
 #   4. subiquity بيضبط bootloader حسب وضع الإقلاع وقت التنصيب (UEFI هون).
 #      لازم خطوة يدوية بعدين لتفعيل BIOS/Legacy كمان — شوف القسم 4 بدليل البناء
@@ -31,7 +31,7 @@ autoinstall:
   keyboard:
     layout: us
 
-  # --- لا تنصّب أي snaps إضافية — نبقي النظام خفيف قدر الإمكان ---
+  # --- ما تنصّب أي snaps زيادة — خلّي النظام خفيف قد ما فينا ---
   snaps: []
 
   # --- الحزم الأساسية بس، الباقي منضيفه بعدين عبر 02-post-install-setup.sh ---
@@ -60,7 +60,7 @@ autoinstall:
         preserve: false
         grub_device: true
 
-      # القسم 1: bios_grub — يسمح بإقلاع BIOS/Legacy لاحقاً على قرص GPT
+      # القسم 1: bios_grub — بيسمح بإقلاع BIOS/Legacy بعدين على قرص GPT
       - type: partition
         id: part-bios-grub
         device: target-disk
@@ -82,7 +82,7 @@ autoinstall:
         device: format-esp
         path: /boot/efi
 
-      # القسم 3: root — نظام التشغيل، غير مشفّر، 20GB
+      # القسم 3: root — نظام التشغيل، مو مشفّر، 20GB
       - type: partition
         id: part-root
         device: target-disk
@@ -115,11 +115,11 @@ autoinstall:
         device: format-data
         path: /mnt/data
 
-  # لا سواب على القرص — رح نستخدم zram بدلها (مضاف بسكربت ما بعد التنصيب)
+  # ما في سواب على القرص — رح نستخدم zram بدلها (مضاف بسكربت ما بعد التنصيب)
   storage_swap:
     swap:
       size: 0
 
-  # ينفذ داخل النظام المثبت قبل أول إقلاع — مجرد تجهيز أساسي
+  # بينفذ داخل النظام المثبت قبل أول إقلاع — بس تجهيز أساسي
   late-commands:
     - echo "Autoinstall finished. Run 02-post-install-setup.sh after first boot, then set up hybrid BIOS+UEFI boot (see 01-Build-Guide.md section 4)." > /target/etc/motd
