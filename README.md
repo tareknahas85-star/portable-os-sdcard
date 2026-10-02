@@ -1,0 +1,47 @@
+# Portable OS on an SD Card
+
+**[⬇️ Download the setup script](https://raw.githubusercontent.com/tareknahas85-star/portable-os-sdcard/main/02-post-install-setup.sh)** &nbsp;|&nbsp; **[⬇️ نزّل سكربت الإعداد](https://raw.githubusercontent.com/tareknahas85-star/portable-os-sdcard/main/02-post-install-setup.sh)**
+
+---
+
+## In English
+
+A guide and scripts to turn a 128GB SD card into a computer you carry in your pocket.
+
+It is a real Ubuntu system on the card, not a live or test copy. You put the card in almost any computer and it starts your own system, with your own files and programs. The desktop is light and fast, and your files are kept in a locked part of the card that nobody can open without your password.
+
+### The files here
+
+- [`01-Build-Guide.md`](./01-Build-Guide.md) is the full guide, step by step
+- [`02-post-install-setup.sh`](./02-post-install-setup.sh) is a script you run after the install. It sets up the desktop, the network and the rest
+- [`autoinstall-user-data.yaml`](./autoinstall-user-data.yaml) is a ready file that installs the system for you. **It has empty values inside** (`CHANGE_ME_HASH_NOT_PLAINTEXT` and `CHANGE_ME_TEMPORARY_PASSPHRASE`). Put your own values before you use it
+
+### Good to know
+
+- The card is cut into 4 parts, so the system starts on old computers and new ones too
+- Your files sit in their own locked part, away from the system part. If you install the system again later, your files stay safe
+- Some settings are added to make the card live longer, because SD cards get tired from too much writing
+
+⚠️ **Before you run this on a real computer:** try it first on a test machine or an empty disk. If you pick the wrong disk by mistake, you can erase everything on it.
+
+---
+
+## بالعربي
+
+دليل وسكربتات بتحوّل كرت SD حجمو 128 جيجا لكمبيوتر بتحملو بجيبتك.
+
+هو نظام أوبونتو حقيقي عالكرت، مو نسخة تجريبية مؤقتة. بتحط الكرت بأي كمبيوتر تقريبًا فبيقلع بنظامك أنت، بملفاتك وبرامجك. سطح المكتب خفيف وسريع، وملفاتك محفوظة بقسم مقفول من الكرت ما حدا بيقدر يفتحو بدون كلمة السر.
+
+### الملفات الموجودة هون
+
+- [`01-Build-Guide.md`](./01-Build-Guide.md) هو الدليل الكامل، خطوة خطوة
+- [`02-post-install-setup.sh`](./02-post-install-setup.sh) سكربت بتشغّلو بعد التنصيب. بيجهّزلك سطح المكتب والشبكة وباقي الأمور
+- [`autoinstall-user-data.yaml`](./autoinstall-user-data.yaml) ملف جاهز بينصّبلك النظام. **جواتو قيم فاضية** (`CHANGE_ME_HASH_NOT_PLAINTEXT` و `CHANGE_ME_TEMPORARY_PASSPHRASE`). حط قيمك الخاصة قبل ما تستخدمو
+
+### شغلات منيح تعرفها
+
+- الكرت مقسوم لـ 4 أقسام، منشان النظام يقلع عالأجهزة القديمة والجديدة سوا
+- ملفاتك بقسم مقفول خاص فيها، بعيد عن قسم النظام. وإذا نصّبت النظام من جديد بعدين، ملفاتك بتضل سليمة
+- انضافت كم إعدادات منشان الكرت يعيش أطول، لأن كروت SD بتتعب من كتر الكتابة عليها
+
+⚠️ **قبل ما تشغّل هاد عكمبيوتر حقيقي:** جرّبو أول شي عجهاز تجريبي أو قرص فاضي. لأنك إذا اخترت القرص الغلط بالغلط، ممكن تمسح كل شي عليه.

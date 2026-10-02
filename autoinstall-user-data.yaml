@@ -1,0 +1,125 @@
+#cloud-config
+# =============================================================================
+# نموذج Autoinstall لـ Ubuntu Server 26.04 LTS — بناء "كمبيوتر محمول" على SD Card
+# =============================================================================
+# تحذير هام قبل الاستخدام:
+#   1. هاد ملف نموذجي (template) — لازم تعدله وتجربه على VM/قرص فاضي قبل استخدامه
+#      على الـ SD Card الحقيقية. أي خطأ بتحديد القرص (disk match) ممكن يمسح
+#      قرص غلط بالجهاز يلي عم تشغّل عليه التنصيب.
+#   2. راجع التوثيق الرسمي الحالي وقت التنفيذ لأن صياغة autoinstall بتتغيّر
+#      بين إصدارات أوبنتو:
+#      https://canonical-subiquity.readthedocs-hosted.com/en/latest/reference/autoinstall-reference.html
+#   3. كلمة سر الـ LUKS محطوطة هون كنص صريح (plaintext) وقت البناء فقط.
+#      غيّرها فوراً بعد أول إقلاع عبر: sudo cryptsetup luksChangeKey /dev/sdX4
+#      واحذف هاد الملف من أي مكان مش آمن بعد الاستخدام.
+#   4. subiquity بيضبط bootloader حسب وضع الإقلاع وقت التنصيب (UEFI هون).
+#      لازم خطوة يدوية بعدين لتفعيل BIOS/Legacy كمان — شوف القسم 4 بدليل البناء
+#      (01-Build-Guide.md).
+# =============================================================================
+
+autoinstall:
+  version: 1
+
+  # --- هوية الجهاز والمستخدم ---
+  identity:
+    hostname: portable-os
+    username: tarek
+    # ولّد الهاش عبر: mkpasswd --method=SHA-512 --rounds=4096
+    password: "$6$CHANGE_ME_HASH_NOT_PLAINTEXT"
+
+  locale: en_US.UTF-8
+  keyboard:
+    layout: us
+
+  # --- لا تنصّب أي snaps إضافية — نبقي النظام خفيف قدر الإمكان ---
+  snaps: []
+
+  # --- الحزم الأساسية بس، الباقي منضيفه بعدين عبر 02-post-install-setup.sh ---
+  packages:
+    - openssh-server
+    - linux-firmware
+    - network-manager
+
+  ssh:
+    install-server: true
+    allow-pw: true
+
+  # =========================================================================
+  # التقسيم اليدوي المخصص — عدّل قيمة "path" أو "match" تحت لتطابق القرص
+  # الصحيح بالضبط (تأكد بـ lsblk قبل التنفيذ). هون افتراضياً حاطط مثال
+  # /dev/sda — هاد لازم يتغيّر حسب جهازك.
+  # =========================================================================
+  storage:
+    config:
+      - type: disk
+        id: target-disk
+        # عدّل هاد السطر ليطابق القرص الصحيح فعلياً (تحقق بـ lsblk):
+        path: /dev/sda
+        ptable: gpt
+        wipe: superblock-recursive
+        preserve: false
+        grub_device: true
+
+      # القسم 1: bios_grub — يسمح بإقلاع BIOS/Legacy لاحقاً على قرص GPT
+      - type: partition
+        id: part-bios-grub
+        device: target-disk
+        size: 1MB
+        flag: bios_grub
+
+      # القسم 2: EFI System Partition — للإقلاع عبر UEFI
+      - type: partition
+        id: part-esp
+        device: target-disk
+        size: 512MB
+        flag: boot
+      - type: format
+        id: format-esp
+        volume: part-esp
+        fstype: fat32
+      - type: mount
+        id: mount-esp
+        device: format-esp
+        path: /boot/efi
+
+      # القسم 3: root — نظام التشغيل، غير مشفّر، 20GB
+      - type: partition
+        id: part-root
+        device: target-disk
+        size: 20GB
+      - type: format
+        id: format-root
+        volume: part-root
+        fstype: ext4
+      - type: mount
+        id: mount-root
+        device: format-root
+        path: /
+
+      # القسم 4: الداتا — الباقي من المساحة، مشفّر بـ LUKS
+      - type: partition
+        id: part-data
+        device: target-disk
+        size: -1
+      - type: dm_crypt
+        id: crypt-data
+        volume: part-data
+        key: "CHANGE_ME_TEMPORARY_PASSPHRASE"
+        dm_name: data_crypt
+      - type: format
+        id: format-data
+        volume: crypt-data
+        fstype: ext4
+      - type: mount
+        id: mount-data
+        device: format-data
+        path: /mnt/data
+
+  # لا سواب على القرص — رح نستخدم zram بدلها (مضاف بسكربت ما بعد التنصيب)
+  storage_swap:
+    swap:
+      size: 0
+
+  # ينفذ داخل النظام المثبت قبل أول إقلاع — مجرد تجهيز أساسي
+  late-commands:
+    - echo "Autoinstall finished. Run 02-post-install-setup.sh after first boot, then set up hybrid BIOS+UEFI boot (see 01-Build-Guide.md section 4)." > /target/etc/motd
